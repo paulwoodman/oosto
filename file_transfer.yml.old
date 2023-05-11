@@ -12,12 +12,12 @@
       register: local_file
       delegate_to: localhost
 
-    - name: Copy file over with bandwidth rate limit
+    - name: Copy file over and rate limit
       ansible.posix.synchronize:
         src: /tmp/rhel-8.7-x86_64-boot.iso
         dest: /tmp
         rsync_opts:
-          - "--bwlimit=100000"
+          - "--bwlimit=10000"
       delegate_to: localhost
 
     - name: get sha of remote file
@@ -27,11 +27,7 @@
         get_checksum: yes
       register: remote_file
 
-    - name: Verify integrity of file
-      ansible.builtin.fail:
-        msg: "File copy was not succesful"
-      failed_when: remote_file.stat.checksum != local_file.stat.checksum
-
-    - name: Test
+    - name: Verify host files md5 value
       debug:
-        msg: "next task"
+        msg: "File Compare hash value of {{ remote_file.stat.checksum }} is same as {{ local_file.stat.checksum }}."
+      failed_when: remote_file.stat.checksum != local_file.stat.checksum
