@@ -1,0 +1,35 @@
+---
+- name: File Transfer of Oosto
+  hosts: all
+  gather_facts: false
+  tasks:
+
+    - name: Get Sha of file
+      stat:
+        path: /tmp/somefile.txt
+        checksum_algorithm: sha256
+        get_checksum: yes
+      register: local_file
+      delegate_to: localhost
+
+    - name: Print sha
+      debug:
+         var: local_file
+
+#    - name: copy file to remote server
+#      copy:
+#       src: /tmp/somefile.txt
+#       dest: /tmp
+#       mode: 0755 
+
+    - name: get sha of remote file
+      stat:
+        path: /tmp/somefile.txt
+        checksum_algorithm: sha256
+        get_checksum: yes
+      register: remote_file
+
+
+    - name: print sha
+      debug: 
+         var: remote_file    

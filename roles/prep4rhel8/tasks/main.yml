@@ -1,0 +1,28 @@
+---
+
+- name:
+  ansible.builtin.yum:
+    name: leapp-upgrade
+    enablerepo: rhel-7-server-extras-rpms
+
+- name: Remove kernel drivers not needed in RHEL8
+  command: rmmod pata_acpi
+
+- name: Remove kernel drivers not needed in RHEL8
+  command: rmmod floppy
+
+- name: Run pre leapp
+  command: leapp preupgrade --target 8.4
+  ignore_errors: True
+
+- name: add leapp answers
+  command: leapp answer --section remove_pam_pkcs11_module_check.confirm=True
+
+- name: Run pre leapp
+  command: leapp upgrade --target 8.4
+
+#- name: Remove workstation repo
+#  ansible.builtin.yum_repository:
+#    name: rhel-7-server-extras-rpms
+#    file: redhat
+#    state: present

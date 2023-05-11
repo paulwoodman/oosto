@@ -1,0 +1,18 @@
+---
+- name: Migration playbook
+  hosts: all
+  gather_facts: false
+  tasks:
+
+    - name: convert workstation to server
+      include_role:
+       name: wk2server
+
+#    - name: convert workstation to server
+#      include_role:
+#        name: prep4rhel8
+
+
+#    - name: convert workstation to server
+#      include_role:
+#        name: cleanup
