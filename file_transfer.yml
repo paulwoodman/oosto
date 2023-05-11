@@ -6,7 +6,7 @@
 
     - name: Get Sha of file
       stat:
-        path: /tmp/rhel-8.7-x86_64-boot.iso
+        path: /tmp/somefile.txt
         checksum_algorithm: md5
         get_checksum: yes
       register: local_file
@@ -14,7 +14,7 @@
 
     - name: Copy file over with bandwidth rate limit
       ansible.posix.synchronize:
-        src: /tmp/rhel-8.7-x86_64-boot.iso
+        src: /tmp/somefile.txt
         dest: /tmp
         rsync_opts:
           - "--bwlimit=100000"
@@ -22,7 +22,7 @@
 
     - name: get sha of remote file
       stat:
-        path: /tmp/rhel-8.7-x86_64-boot.iso
+        path: /tmp/somefile.txt
         checksum_algorithm: md5
         get_checksum: yes
       register: remote_file
