@@ -1,0 +1,29 @@
+---
+- name: install pkgs
+  ansible.builtin.dnf:
+    name: '@Minimal Install'
+    state: present
+
+- name: remove pkgs
+  ansible.builtin.dnf:
+    name: '@Server with GUI'
+    state: absent
+
+- name: remove pkgs
+  ansible.builtin.dnf:
+    name: '@Server'
+    state: present
+
+- name: list old kernels
+  find:
+    paths: /lib/modules
+    file_type: directory
+    exclude: '*.el8*'
+  register: kernel_files
+
+- name: print old kernels
+  debug:
+    var: "{{ kernel_files | regex_search('path\\s+=\\s+(.*)','\\1')}}"
+
+#- name: delete old kernels
+#  command: /usr/sbin/weak-modules --remove-kernel kernel_files.path
