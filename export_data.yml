@@ -1,0 +1,9 @@
+---
+- name: Migration playbook
+  hosts: all
+  gather_facts: false
+  tasks:
+
+    - name: Export Watchlist
+      include_role:
+       name: export_data
