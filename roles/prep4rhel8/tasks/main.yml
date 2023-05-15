@@ -8,8 +8,19 @@
 - name: Remove kernel drivers not needed in RHEL8
   command: rmmod pata_acpi
 
-- name: Remove kernel drivers not needed in RHEL8
-  command: rmmod floppy
+#- name: Remove kernel drivers not needed in RHEL8
+#command: rmmod floppy
+
+- name: Remove kernel devel pkgs
+  yum:
+    name: kernel-devel-3.10.0-957.27.2.el7
+    state: absent
+
+- name: Remove symlink
+  file:
+    path: ssd
+    state: absent
+
 
 - name: Run pre leapp
   command: leapp preupgrade --target 8.4
