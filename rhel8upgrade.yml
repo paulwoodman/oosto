@@ -1,0 +1,9 @@
+---
+- name: Migration playbook
+  hosts: all
+  gather_facts: false
+  tasks:
+
+    - name: convert workstation to server
+      include_role:
+        name: prep4rhel8
