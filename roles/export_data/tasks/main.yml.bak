@@ -1,0 +1,15 @@
+---
+
+- name: Copy migration tar to server
+  copy:
+    src: migration-v1-to-v2-1.0.5-tar.gz
+    dest: /tmp
+    mode: 755
+
+- name: extract migration tar file
+  unarchive:
+    src: /tmp/migration-v1-to-v2-1.0.5-tar.gz
+    dest: /opt
+
+- name: Run migration
+  command: /opt/migration-v1-to-v2-1.0.5/migration-tool.sh --action export
