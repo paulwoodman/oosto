@@ -5,11 +5,13 @@
     name: leapp-upgrade
     enablerepo: rhel-7-server-extras-rpms
 
-- name: Remove kernel drivers not needed in RHEL8
-  command: rmmod pata_acpi
-
-#- name: Remove kernel drivers not needed in RHEL8
-#command: rmmod floppy
+- name: remove not needed modules
+  modprobe:
+    name: "{{item}}"
+    state: absent
+  with_items:
+     - "pata_acpi"
+     - "floppy"
 
 - name: Remove kernel devel pkgs
   yum:
@@ -20,7 +22,6 @@
   file:
     path: ssd
     state: absent
-
 
 - name: Run pre leapp
   command: leapp preupgrade --target 8.4
