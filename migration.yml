@@ -7,6 +7,7 @@
     - name: Convert workstation to server and update to latest RHEL 7
       include_role:
         name: wk2server
+      when: ansible_kernel != '3.10.0-1160.90.1.el7.x86_64'
 
     - name: Upgrade server from RHEL 7 to RHEL 8
       include_role:

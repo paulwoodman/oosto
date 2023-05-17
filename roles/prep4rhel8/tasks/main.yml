@@ -1,9 +1,9 @@
 ---
 
-- name:
-  ansible.builtin.yum:
-    name: leapp-upgrade
-    enablerepo: rhel-7-server-extras-rpms
+#- name:
+ # ansible.builtin.yum:
+ #   name: leapp-upgrade
+  #  enablerepo: rhel-7-server-extras-rpms
 
 - name: remove not needed modules
   modprobe:
@@ -18,32 +18,45 @@
     name: kernel-devel-3.10.0-957.27.2.el7
     state: absent
 
+- name: Remove adwaita-qt5-1.0-1.el7.x86_64
+  yum:
+    name:  adwaita-qt5-1.0-1.el7.x86_64
+    state: absent
+
 - name: Remove symlink
   file:
     path: ssd
     state: absent
 
-- name: Run pre leapp
-  command: leapp preupgrade --target 8.4
-  ignore_errors: True
+- name: copy leapp data
+  copy:
+    src: leapp-data.tar.gz
+    dest: /tmp
 
-- name: add leapp answers
-  command: leapp answer --section remove_pam_pkcs11_module_check.confirm=True
+- name: extract leapp data
+  shell: tar -xzf /tmp/leapp-data.tar.gz -C /etc/leapp/files && rm /tmp/leapp-data.tar.gz
 
-- name: Run pre leapp
-  command: leapp upgrade --target 8.4
+#- name: Run pre leapp
+#  command: leapp preupgrade --target 8.4
+ # ignore_errors: True
+
+#- name: add leapp answers
+#  command: leapp answer --section remove_pam_pkcs11_module_check.confirm=True
+
+#- name: Run pre leapp
+#  command: leapp upgrade --target 8.4
 
 - name: reboot the server
   reboot:
+    reboot_timeout: 7200
 
-- name: Wait for server to complete the upgrade
-  wait_for_connection:
-    delay: 900
-    timeout: 7200
+- name: check for kernel update
+  command: uname -r
+  register: kernel_version_two
 
 - name: Kernel updated!
   fail:
     msg: Kernel is not updated {{ kernel_version.stdout }}
-  when: (kernel_verion.stdout != '4.18.0-305.25.1.el8_4.x86_64')
+  when: (kernel_version_two.stdout != '4.18.0-305.25.1.el8_4.x86_64')
 
 
