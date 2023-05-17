@@ -1,9 +1,9 @@
 ---
 
-#- name:
- # ansible.builtin.yum:
- #   name: leapp-upgrade
-  #  enablerepo: rhel-7-server-extras-rpms
+- name:
+  ansible.builtin.yum:
+    name: leapp-upgrade
+    enablerepo: rhel-7-server-extras-rpms
 
 - name: remove not needed modules
   modprobe:
@@ -36,15 +36,15 @@
 - name: extract leapp data
   shell: tar -xzf /tmp/leapp-data.tar.gz -C /etc/leapp/files && rm /tmp/leapp-data.tar.gz
 
-#- name: Run pre leapp
-#  command: leapp preupgrade --target 8.4
- # ignore_errors: True
+- name: Run pre leapp
+  command: leapp preupgrade --target 8.4
+  ignore_errors: True
 
-#- name: add leapp answers
-#  command: leapp answer --section remove_pam_pkcs11_module_check.confirm=True
+- name: add leapp answers
+  command: leapp answer --section remove_pam_pkcs11_module_check.confirm=True
 
-#- name: Run pre leapp
-#  command: leapp upgrade --target 8.4
+- name: Run pre leapp
+  command: leapp upgrade --target 8.4
 
 - name: reboot the server
   reboot:
@@ -58,5 +58,3 @@
   fail:
     msg: Kernel is not updated {{ kernel_version.stdout }}
   when: (kernel_version_two.stdout != '4.18.0-305.25.1.el8_4.x86_64')
-
-
