@@ -1,4 +1,9 @@
 ---
+
+- name: Check initial kernel version
+  debug:
+    var: ansible_kernel
+
 - name: copy rpm package to client
   copy:
      src: redhat-release-server-7.9-6.el7_9.x86_64.rpm
@@ -29,11 +34,6 @@
     file: redhat
     state: absent
 
-
-      #- name: remove workstation repos
-      # command: subscription-manager repos --disable=rhel-7-workstation-rpms
-      #ignore_errors: True
-
 - name: run distro-sync
   command: yum -y distro-sync
 
@@ -41,3 +41,20 @@
   yum:
     name: '*'
     state: latest
+
+- name: Reboot the server
+  reboot:
+
+- name: Wait for server to come back up
+  wait_for_connection:
+    delay: 60
+    timeout: 300
+
+- name: Check for updated kernel
+  shell: uname -r
+  register: kernel_version
+
+- name: Kernel is not updated
+  fail:
+    msg: Kernel is {{ kernel_version.stdout }}
+  when: kernel_version.stdout != '3.10.0-1160.90.1.el7.x86_64'

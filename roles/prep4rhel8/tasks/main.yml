@@ -33,8 +33,17 @@
 - name: Run pre leapp
   command: leapp upgrade --target 8.4
 
-#- name: Remove workstation repo
-#  ansible.builtin.yum_repository:
-#    name: rhel-7-server-extras-rpms
-#    file: redhat
-#    state: present
+- name: reboot the server
+  reboot:
+
+- name: Wait for server to complete the upgrade
+  wait_for_connection:
+    delay: 900
+    timeout: 7200
+
+- name: Kernel updated!
+  fail:
+    msg: Kernel is not updated {{ kernel_version.stdout }}
+  when: (kernel_verion.stdout != '4.18.0-305.25.1.el8_4.x86_64')
+
+
