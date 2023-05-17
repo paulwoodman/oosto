@@ -1,18 +1,21 @@
 ---
-- name: install pkgs
+- name: install Minimal pkgs
   ansible.builtin.dnf:
     name: '@Minimal Install'
     state: present
 
-- name: remove pkgs
+- name: remove GUI pkgs
   ansible.builtin.dnf:
     name: '@Server with GUI'
     state: absent
 
-- name: remove pkgs
+- name: install basic server  pkgs
   ansible.builtin.dnf:
     name: '@Server'
     state: present
+
+- name: Disable GUI in systemd
+  command: systemctl set-default -f multi-user.target
 
 - name: list old kernels
   find:
@@ -23,7 +26,8 @@
 
 - name: print old kernels
   debug:
-    var: "{{ kernel_files | regex_search('path\\s+=\\s+(.*)','\\1')}}"
+    var: kernel_files
 
+#    var: "{{ kernel_files | regex_search('path\\s+=\\s+(.*)','\\1')}}"
 #- name: delete old kernels
 #  command: /usr/sbin/weak-modules --remove-kernel kernel_files.path

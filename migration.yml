@@ -1,18 +1,19 @@
 ---
-- name: Migration playbook
+- name: Oosto v1 to v2 install
   hosts: all
-  gather_facts: false
+  gather_facts: True
   tasks:
 
-    - name: convert workstation to server
+    - name: Convert workstation to server and update to latest RHEL 7
       include_role:
         name: wk2server
 
-    #    - name: convert workstation to server
-    #  include_role:
-    #    name: prep4rhel8
+    - name: Upgrade server from RHEL 7 to RHEL 8
+      include_role:
+        name: prep4rhel8
+      when: kernel_version.stdout == '3.10.0-1160.90.1.el7.x86_64'
 
-
-#    - name: convert workstation to server
-#      include_role:
-#        name: cleanup
+    - name: Clean up of old files
+      include_role:
+        name: cleanup
+      when: kernel_version.stdout == '4.18.0-305.25.1.el8_4.x86_64'
