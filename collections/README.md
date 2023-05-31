@@ -4,13 +4,13 @@ Collections are a distribution format for Ansible content that can include playb
 
 ## Installing collections with `ansible-galaxy`
 
-By default, ansible-galaxy collection install uses https://galaxy.ansible.com as the Galaxy server (as listed in the ansible.cfg file under GALAXY_SERVER). You do not need any further configuration.
+By default, ansible-galaxy collection install uses https://galaxy.ansible.com as the Galaxy server (as listed in the `ansible.cfg` file under `GALAXY_SERVER`). You do not need any further configuration.
 
 To **install** a collection hosted in Galaxy:
 
 ```ansible-galaxy collection install my_namespace.my_collection```
 
-To **upgrade** a collection to the latest available version from the Galaxy server you can use the --upgrade option:
+To **upgrade** a collection to the latest available version from the Galaxy server, you can use the --upgrade option:
 
 ```ansible-galaxy collection install my_namespace.my_collection --upgrade```
 
