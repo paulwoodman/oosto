@@ -116,3 +116,40 @@ Ansible Facts can be cached too! Options include local file, memcached, Redis, a
 The combination of using facts and fact caching can allow you to poll existing, in-memory data rather than parsing numerous additional commands to constantly check/refresh the device's running config.
 
 --------------
+
+** Playbook Debugging and Connection Logging
+
+Ansible allows you to enable debug logging at a number of levels. Most importantly, at both the playbook run level, and the network connection level. Having that info will become invaluable with your future troubleshooting efforts.
+
+From the CLI, you can set these as environment variables before running a playbook:
+
+```
+export ANSIBLE_DEBUG=true
+export ANSIBLE_LOG_PATH=/tmp/ansible-debug.log
+```
+
+And then run your playbook with `-v`:
+
+```
+ansible-playbook … -v
+-v will show increased logging around individual plays/tasks
+-vvv will show Ansible playbook execution run logs
+-vvvv will show SSH and TCP connection logging
+```
+
+If standard debug options aren’t enough…if you want to *truly* see everything that’s happening with Ansible, say no more! You can keep remote log files and enable persistent log messages.
+
+```
+export ANSIBLE_KEEP_REMOTE_FILES=true
+export ANSIBLE_PERSISTENT_LOG_MESSAGES=True
+```
+
+**NOTE** With great power comes great responsibility -- both of these log settings above are *super* insecure. They will give you *everything* that Ansible does and sees — the deepest view of exactly what’s happening on a remote device. And you’ll expose vars/logs as they’re unencrypted and made readable. Do be careful!
+
+When it comes to a traditional OS, setting `ansible_keep_remote_files` will allow you to see process events, system calls, and whatnot that have happened on the remote system.
+
+And on the network and non-OS side, you can enable `ansible_persistent_log_messages` to see netconf responses, system calls, and other such things from your network hosts.
+
+```
+2021-03-01 20:35:23,127 p=26577 u=ec2-user n=ansible | jsonrpc response: {"jsonrpc": "2.0", "id": "9c4d684c-d252-4b6d-b624-dff71b20e0d3", "result": [["vvvv", "loaded netconf plugin default from path /home/ec2-user/ansible/ansible_venv/lib/python3.7/site-packages/ansible/plugins/netconf/default.py for network_os default"], ["log", "network_os is set to default"], ["warning", "Persistent connection logging is enabled for lab1-idf1-acc-sw01. This will log ALL interactions to /home/ec2-user/ansible/ansible_debug.log and WILL NOT redact sensitive configuration like passwords. USE WITH CAUTION!"]]}
+```
