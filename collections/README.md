@@ -41,7 +41,9 @@ ns/
     ├── galaxy.yml
     └── plugins/
 ```
-```ansible-galaxy collection install /path/to/ns -p ./collections```
+```
+ansible-galaxy collection install /path/to/ns -p ./collections
+```
 
 ## Using collections in a playbook
 
