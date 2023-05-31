@@ -5,7 +5,7 @@
 
 - name: clone git repo
   git:
-    repo: https://{{ git_username | urlencode }}:{{ git_password }}@github.com/harrytruman
+    repo: https://{{ git_username | urlencode }}:{{ git_password }}@github.com/{{ git_repo_name }}
     dest: "{{ git_dir }}"
     update: yes
     version: master
