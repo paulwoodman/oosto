@@ -33,9 +33,10 @@ ansible_password: !vault |
 [servers]
 dev-anv1 ansible_host=10.0.15.14
 
-[rhel:vars]
+[server:vars]
 ansible_become=yes
 ansible_become_method=enable
+ansible_os=redhat
 
 [nxos]
 nxos-dc1-rtr
@@ -110,28 +111,11 @@ You can also run custom commands, save the output, and parse the configuration l
     ansible_custom_date: "{{ output.stdout[0] | regex_search('Version (\S+)', '\1') | first }}"
 ```
 
-Ansible Facts can be cached too! Options include local file, memcached, Redis, and a plethora of others, via Ansible's [Cache Plugins](https://docs.ansible.com/ansible/latest/plugins/cache.html). And caching can be enabled with just the click button [in AWX and Tower](https://docs.ansible.com/ansible-tower/latest/html/userguide/job_templates.html#benefits-of-fact-caching), where you can then view facts via UI and API both.
-
-![fact cache](https://docs.ansible.com/ansible-tower/latest/html/userguide/_images/job-templates-options-use-factcache.png)
+Ansible Facts can be cached too! Options include local file, memcached, Redis, and a plethora of others, via Ansible's [Cache Plugins](https://docs.ansible.com/ansible/latest/plugins/cache.html).
 
 The combination of using facts and fact caching can allow you to poll existing, in-memory data rather than parsing numerous additional commands to constantly check/refresh the device's running config.
 
 --------------
-
-### Configs, Commands, and Templates
-
-The bread and butter of Ansible's simplicity is being able to quickly and easily generate configs, perform diffs, and send commands. If you already have full/partial config templates, it's nearly effortless to extract the things that can be easily converted to variables, and run the bulk of your commands through Jinja templates.
-
-```
-vlan {{ vlan_id }}
-  name {{ vlan_description }}
-interface port-channel66.{{ vlan_id }}
-  description {{ interface_description }}
-  encapsulation dot1q {{ vlan_id }}
-
-```
-
-Once your vars and templates are setup, you can determine where you want the config output staged. At that point, you're ready to generate a template and push commands!
 
 ## Getting Started with Git
 
