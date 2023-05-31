@@ -42,3 +42,28 @@ ns/
     └── plugins/
 ```
 ```ansible-galaxy collection install /path/to/ns -p ./collections```
+
+## Using collections in a playbook
+
+Once installed, you can reference a collection content by its fully qualified collection name (FQCN):
+```
+- hosts: all
+  tasks:
+    - my_namespace.my_collection.mymodule:
+        option1: value
+```
+
+This works for roles or any type of plugin distributed within the collection:
+
+```
+- hosts: all
+  tasks:
+    - import_role:
+        name: my_namespace.my_collection.role1
+
+    - my_namespace.mycollection.mymodule:
+        option1: value
+
+    - debug:
+        msg: '{{ lookup("my_namespace.my_collection.lookup1", 'param1')| my_namespace.my_collection.filter1 }}'
+```
