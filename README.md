@@ -132,3 +132,72 @@ interface port-channel66.{{ vlan_id }}
 ```
 
 Once your vars and templates are setup, you can determine where you want the config output staged. At that point, you're ready to generate a template and push commands!
+
+## Getting Started with Git
+
+### Creating a Git Repo with `ansible-galaxy`
+
+Using the `ansible-galaxy` command line tool that comes bundled with Ansible, we can create a role with the `init` command.
+
+For example, the following will create a role directory structure called `new-project` in the current working directory:
+
+```
+ansible-galaxy init new-project
+```
+
+This will create the following file and directory structure:
+```
+new-project/
+├── README.md 
+└── roles
+    ├── defaults
+    │   └── main.yml
+    ├── files
+    ├── handlers
+    ├── meta
+    │   └── main.yml
+    ├── tasks
+    │   └── main.yml
+    ├── templates
+    └── vars
+        └── main.yml
+```
+
+With your new Ansible role directory structure created, you can now initialize this role directory as a new Git repository. The process of making changes and saving things in a repo is called a `commit.`
+
+In this example, we’ll initialize our new repo and make our first commit:
+```
+ansible-galaxy init new-repo
+cd new-repo/
+git init
+git add .
+git commit -m 'making new role'
+git push
+```
+
+And if you need to change the location of where that repo syncs to, you can change the remote push destination to a custom Git location:
+```
+git remote add origin <git_repo_url>
+git push -u origin main
+```
+
+### Creating a Git Repo from scratch
+
+Alternatively, in situations where the `ansible-galaxy` tool is NOT available, the following commands creates the requisite role files and will initialize the role directory as a new git repo:
+
+```
+git init new-repo
+
+for directory in tasks handlers files templates vars defaults meta;
+  do mkdir -p new-repo/roles/$directory; done
+
+for file in tasks vars defaults meta;
+  do touch new-repo/roles/$file/main.yml; done
+
+touch new-repo/README.md
+
+cd new-repo
+git add .
+git commit -m 'ansible role with all the essentials'
+git push
+```
