@@ -154,3 +154,67 @@ And on the network and non-OS side, you can enable `ansible_persistent_log_messa
 ```
 2021-03-01 20:35:23,127 p=26577 u=ec2-user n=ansible | jsonrpc response: {"jsonrpc": "2.0", "id": "9c4d684c-d252-4b6d-b624-dff71b20e0d3", "result": [["vvvv", "loaded netconf plugin default from path /home/ec2-user/ansible/ansible_venv/lib/python3.7/site-packages/ansible/plugins/netconf/default.py for network_os default"], ["log", "network_os is set to default"], ["warning", "Persistent connection logging is enabled for lab1-idf1-acc-sw01. This will log ALL interactions to /home/ec2-user/ansible/ansible_debug.log and WILL NOT redact sensitive configuration like passwords. USE WITH CAUTION!"]]}
 ```
+
+--------------
+
+## Scale and Performance Testing
+
+Ansible is built around many types of plugins, and some of most useful are `Callback Plugins`. These allow you to unlock some very interesting capabilities to Ansible, such as making your computer read the playbook as it runs.
+
+Ansible ships with a number of callback plugins that are ready to use out-of-the-box — simply add a comma separated list of callback plugins to `callback_whitelist` in your `ansible.cfg` file.
+
+The particular callback plugin that will be most helpful with performance tuning playbooks is called `profile_tasks`. It prints out a detailed breakdown of task execution times, sorted from longest to shortest, as well as a running timer during play execution. Speaking of, `timer` is another useful callback plugin that prints total execution time with more friendly output.
+
+Ultimately, let’s start with these. Edit your `ansible.cfg` file to enable these callback plugins:
+
+```
+vi ansible.cfg
+callback_whitelist = profile_tasks, timer
+```
+
+With the `profile_tasks` and `timer` callback plugins enabled, run your playbook again and you’ll see more output. For example, here’s a profile of fact collection tasks on a single inventory host:
+
+```
+ansible-playbook facts.yml --ask-vault-pass -e "survey_hosts=cisco-ios"
+```
+
+```
+ansible_facts : collect output from ios device ------------ 1.94s
+ansible_facts : include cisco-ios tasks ------------------- 0.50s
+ansible_facts : set config_lines fact --------------------- 0.26s
+ansible_facts : set version fact -------------------------- 0.07s
+ansible_facts : set management interface name fact -------- 0.07s
+ansible_facts : set model number -------------------------- 0.07s
+ansible_facts : set config fact --------------------------- 0.07s
+```
+
+And a profile of a `change password` task on a host:
+
+```
+ansible-playbook config_localpw.yml -e "survey_hosts=cisco-ios"
+```
+
+```
+config_localpw : Update line passwords --------------------- 4.66s
+ansible_facts : collect output from ios device ------------- 5.06s
+ansible_facts : include cisco-ios tasks -------------------- 0.51s
+config_localpw : Update line passwords --------------------- 0.34s
+config_localpw : Update enable and username config lines --- 0.33s
+config_localpw : debug ------------------------------------- 0.23s
+config_localpw : Update enable and username config lines --- 0.22s
+config_localpw : Update terminal server username doorbell -- 0.22s
+config_localpw : Update line passwords --------------------- 0.20s
+config_localpw : Update terminal server username doorbell -- 0.20s
+config_localpw : Update terminal server username doorbell -- 0.19s
+config_localpw : debug ------------------------------------- 0.19s
+config_localpw : Identify if it has a modem ---------------- 0.14s
+config_localpw : set_fact - Modem slot 2 ------------------- 0.11s
+config_localpw : set_fact - Modem slot 1 ------------------- 0.10s
+config_localpw : Update terminal server username doorbell -- 0.10s
+config_localpw : set_fact - Modem slot 3 ------------------- 0.10s
+config_localpw : Update line passwords --------------------- 0.10s
+config_localpw : Update enable and username config lines --- 0.09s
+config_localpw : Update enable and username config lines --- 0.09s
+```
+
+Automation will be unique to every playbooks, host, and organization, so it’s important to regularly track performance benchmarks as your roles evolves. Beyond the obvious benefit of being able to accurately estimate your automation run times, you can determine where improvements can be made while proactively monitoring for faulty code/logic that will inevitably slip through peer reviews.
