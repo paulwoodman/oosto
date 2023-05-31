@@ -16,10 +16,7 @@ I *highly* recommend [vaulting your passwords/keys/creds](https://docs.ansible.c
 
 ```
 [all]
-rhel-dc1-srv1
-rhel-dc1-srv2
-rhel-dc2-srv1
-rhel-dc2-srv1
+dev-anv1 ansible_host=10.0.15.14
 nxos-dc1-rtr
 nxos-dc2-rtr
 
@@ -33,16 +30,12 @@ ansible_password: !vault |
        3837646266663835640a313164343535316666653031353763613037656362613535633538386539
        65656439626166666363323435613131643066353762333232326232323565376635
 
-[rhel]
-rhel-dc1-srv1
-rhel-dc1-srv2
-rhel-dc2-srv1
-rhel-dc2-srv1
+[servers]
+dev-anv1 ansible_host=10.0.15.14
 
 [rhel:vars]
 ansible_become=yes
 ansible_become_method=enable
-ansible_os=rhel
 
 [nxos]
 nxos-dc1-rtr
@@ -59,12 +52,12 @@ ansible_connection=network_cli
 
 ### Fact Collection and Config Parsing
 
-Ansible's native fact gathering can be invoked by setting `gather_facts: true` in your top level playbook. And every major vendor has fact modules that you can use in a playbook task: `ios_facts`, `eos_facts`, `nxos_facts`, `junos_facts`, etc...
+Ansible's native fact gathering can be invoked by setting `gather_facts: true` in your top level playbook. And every major vendor has fact modules that you can use in a playbook task: `ios_facts`, `f5_facts`, `vmware_facts`, etc...
 
 Just enable `gather_facts`, and you're on your way! Here's an example of gathering facts on a Cisco IOS device to create a backup of the full running config, and parse config subsets into a platform-agnostic data model:
 
 ```
-- name: collect device facts and running configs
+- name: collect device facts
   hosts: all
   gather_facts: yes
 ```
