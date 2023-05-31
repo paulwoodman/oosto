@@ -80,6 +80,8 @@ or
 
 Now that you understand the basics behind Ansible development, and you’ve created or cloned a Git repo, you’re ready to start writing playbooks!
 
+--------------
+
 ## Creating a New Git Branch
 When beginning new development, you’ll create a new branch in a repo. Brand new development should start with a pull/rebase from the master branch:
 
@@ -91,12 +93,12 @@ git checkout feature/config_aaa
 
 --------------
 
-## Committing Code
+## Committing to a New Branch
 Now you’re on a new feature branch. Make sure you commit your changes!
 
 ```
 git add .
-git commit -a -m “new branch”
+git commit -m “new branch”
 git push origin feature/config_aaa
 ```
 
