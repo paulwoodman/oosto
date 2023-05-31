@@ -43,7 +43,7 @@ ns/
 ```
 ```ansible-galaxy collection install /path/to/ns -p ./collections```
 
-## Using collections in a playbook
+## Using collections in a playbook
 
 Once installed, you can reference a collection content by its fully qualified collection name (FQCN):
 ```
