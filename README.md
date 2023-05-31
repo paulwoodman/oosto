@@ -144,7 +144,8 @@ export ANSIBLE_KEEP_REMOTE_FILES=true
 export ANSIBLE_PERSISTENT_LOG_MESSAGES=True
 ```
 
-**NOTE** With great power comes great responsibility -- both of these log settings above are *super* insecure. They will give you *everything* that Ansible does and sees — the deepest view of exactly what’s happening on a remote device. And you’ll expose vars/logs as they’re unencrypted and made readable. Do be careful!
+**NOTE** 
+With great power comes great responsibility -- both of these log settings above are *super* insecure. They will give you *everything* that Ansible does and sees — the deepest view of exactly what’s happening on a remote device. And you’ll expose vars/logs as they’re unencrypted and made readable. Do be careful!
 
 When it comes to a traditional OS, setting `ansible_keep_remote_files` will allow you to see process events, system calls, and whatnot that have happened on the remote system.
 
