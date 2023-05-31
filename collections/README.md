@@ -68,7 +68,7 @@ This works for roles or any type of plugin distributed within the collection:
         msg: '{{ lookup("my_namespace.my_collection.lookup1", 'param1')| my_namespace.my_collection.filter1 }}'
 ```
 
-## Install multiple collections with a requirements file
+## Install multiple collections with a requirements file
 
 You can set up a requirements.yml file to install multiple collections in one command. This file is a YAML file in the format:
 ```
