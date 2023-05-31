@@ -18,7 +18,7 @@ group_vars
   │   │   └── main.yml
   │   │   └── vault.yaml
   │   │   └── extra.yaml
-  │   ├── aci
+  │   ├── rhel
   │   │   └── main.yaml
   │   │   └── vault.yaml
   │   │   └── unique.yaml
@@ -32,7 +32,7 @@ And Ansible allows you to reference variables defined as either `hostvars` _or_ 
 
 With any of the above examples -- IOS, NXOS, ACI, or F5 -- and regardless of which file they're in -- these `groupvars` can be referenced individually _or_ dynamically, like so:
 ```
-  hostvars['{{ inventory_host }}']['ansible_network_os']['var']
+  hostvars['{{ inventory_host }}']['ansible_os']['var']
 ```
 
 And for broader infrastructure projects, this sort of structure scales well:
