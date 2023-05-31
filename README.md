@@ -137,17 +137,17 @@ Once your vars and templates are setup, you can determine where you want the con
 
 ### Creating a Git Repo with `ansible-galaxy`
 
-Using the `ansible-galaxy` command line tool that comes bundled with Ansible, we can create a role with the `init` command.
+Using the `ansible-galaxy` command line tool that comes bundled with Ansible, we can create the skeleton structure for a new role with the `init` command.
 
-For example, the following will create a role directory structure called `new-project` in the current working directory:
+For example, the following will create a role directory structure called `new-repo` in the current working directory:
 
 ```
-ansible-galaxy init new-project
+ansible-galaxy init new-repo
 ```
 
 This will create the following file and directory structure:
 ```
-new-project/
+new-repo/
 ├── README.md 
 └── roles
     ├── defaults
@@ -175,7 +175,7 @@ git commit -m 'making new role'
 git push
 ```
 
-And if you need to change the location of where that repo syncs to, you can change the remote push destination to a custom Git location:
+And if you need to modify the location of where that repo syncs to, you can change the remote push destination to a custom Git location:
 ```
 git remote add origin <git_repo_url>
 git push -u origin main
