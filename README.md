@@ -218,3 +218,30 @@ config_localpw : Update enable and username config lines --- 0.09s
 ```
 
 Automation will be unique to every playbooks, host, and organization, so it’s important to regularly track performance benchmarks as your roles evolves. Beyond the obvious benefit of being able to accurately estimate your automation run times, you can determine where improvements can be made while proactively monitoring for faulty code/logic that will inevitably slip through peer reviews.
+
+--------------
+
+## Ansible Process Monitoring via CLI
+
+It's recommended to use `dstat` when you're trying to benchmark Ansible CLI performance. It's incredibly useful and informative when you want to log/monitor any and all system stats related to how Ansible runs. `dstat` is an all-in-one stat collection tool that will gather everything around CPU, process, memory, I/O, network, system load, etc…
+
+For instance, this `dstat` command will capture all the following output and display it in a graph that updates every second:
+
+```
+dstat -tcmslrnpyi --fs --socket --unix --top-oom
+   -t  timestamp
+   -c total CPU usage
+   -m memory usage
+   -s swap space
+   -l load average
+   -r disk I/O
+   -n network I/O
+   -p processes
+   -y linux system stats
+   -i interrupts
+   --fs filesystem open files and inodes
+   --socket network sockets
+   --unix unix sockets--top-oom watch for OOM process
+```
+
+**Note:** In RHEL8+, `dstat` is supplied by the `pcp-system-tools` package.
