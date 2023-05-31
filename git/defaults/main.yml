@@ -4,4 +4,6 @@ git_branch_merge: "master"
 git_username: test
 git_password: password
 
+git_repo_name: "repo_name_goes_here"
+
 git_dir: "/tmp/testrepo"
