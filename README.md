@@ -117,7 +117,7 @@ The combination of using facts and fact caching can allow you to poll existing, 
 
 --------------
 
-** Playbook Debugging and Connection Logging
+## Enabling Playbook Debugging and Connection Logging
 
 Ansible allows you to enable debug logging at a number of levels. Most importantly, at both the playbook run level, and the network connection level. Having that info will become invaluable with your future troubleshooting efforts.
 
