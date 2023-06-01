@@ -1,5 +1,6 @@
 ---
-- name: "include {{ ansible_network_os }} tasks"
+# This play will take any 'ansible_network_os' value and run the corresponding tasks
+- name: "fact checking {{ ansible_network_os }} hosts"
   include_tasks: "{{ item }}"
   with_first_found:
     - files: "{{ ansible_network_os }}.yml"
