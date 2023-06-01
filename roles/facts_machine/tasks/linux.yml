@@ -4,8 +4,8 @@
 #    filter: ansible_distribution_version
   register: linux_facts
 
-- name: set version fact
-  set_fact:
-    cacheable: true
-    version: "{{ (linux_facts)['ansible_facts']['ansible_distribution_version'] }}"
+#- name: set version fact
+#  set_fact:
+#    cacheable: true
+#    version: "{{ (linux_facts)['ansible_facts']['ansible_distribution_version'] }}"
 
