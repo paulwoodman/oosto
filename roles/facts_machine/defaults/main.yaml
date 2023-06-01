@@ -1,5 +1,13 @@
 ---
+# Starting point for Linux fact collection
 ansible_network_os: linux
+
+#
+# Uncomment this if you've set 'ansible_network_os' in your inventory and/or playbooks/roles'.
+# That will allow your inventory groups to dynamically run against the associated role/task.
+#
+# ansible_network_os: "{{ ansible_network_os }}"
+
 #cli_nexus_long_timeout:
 #  host: "{{ inventory_hostname }}"
 #  username: "{{ ansible_username }}"
