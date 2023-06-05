@@ -24,6 +24,11 @@
     exclude: '*.el8*'
   register: kernel_files
 
+- name: print old kernels
+  debug:
+    var: item.path | basename
+  loop: "{{ kernel_files.files }}"
+
 - name: Remove weak modules for the old kernels
   command: /usr/sbin/weak-modules --remove-kernel {{ item.path | basename }}
   loop: "{{ kernel_files.files }}"
@@ -55,12 +60,20 @@
     file_type: "file"
   register: rescue_files
 
+- name: Print rescue
+  debug:
+    var: rescue_files
+
 - name: Remove the existing rescue kernels
   file:
     state: absent
     path: "{{ item.path }}"
   loop: "{{ rescue_files.files }}"
 
-- name: Reinstall the current kernel to rescue kernel
+- name: get current kernel
+  debug:
+    var: ansible_kernel
+
+- name: Reinstall the current kernel to rescue kernal
   command: dnf reinstall -y kernel-core-{{ ansible_kernel }}
 

@@ -1,0 +1,98 @@
+---
+
+- name: Check initial kernel version
+  debug:
+    var: ansible_kernel
+
+- name: Get client info
+  command: cat /etc/redhat-release
+  register: server_info
+
+- name: facts info
+  debug:
+    var: server_info
+
+- name: Only run when workstation
+  debug:
+    msg: "this is a workstation"
+  when: server_info.stdout == "Red Hat Enterprise Linux Workstation release 7.6 (Maipo)"
+
+#- name: copy rpm to client
+#  copy:
+#     src: katello-ca-consumer-latest.noarch.rpm
+#     dest: /tmp/katello-ca-consumer-latest.noarch.rpm
+
+- name: Unregister from Subscription Manager, if registered
+  redhat_subscription:
+    state: absent
+
+- name: Install Satellite to server
+  yum:
+#    name: /tmp/katello-ca-consumer-latest.noarch.rpm
+    name: "{{ satellite_katello_rpm_url }}"
+    state: present
+    validate_certs: no
+
+- name: Register to Satellite
+  community.general.redhat_subscription:
+    state: present
+    #activationkey: RHEL_CONV_AK
+    activationkey: "{{ activation_key }}"
+    org_id: "{{ org_id }}"
+    #org_id: Menards
+    force_register: yes
+    server_insecure: yes
+
+- name: copy rpm package to client
+  copy:
+     src: redhat-release-server-7.9-6.el7_9.x86_64.rpm
+     dest: /tmp
+     mode: 0755
+  when: server_info.stdout == "Red Hat Enterprise Linux Workstation release 7.6 (Maipo)"
+
+- name: install the server rpm
+  command: rpm -ivh --force /tmp/redhat-release-server-7.9-6.el7_9.x86_64.rpm
+  when: server_info.stdout == "Red Hat Enterprise Linux Workstation release 7.6 (Maipo)"
+  ignore_errors: True
+   
+
+- name: remove workstation packages
+  yum:
+    name: redhat-release-workstation*  
+    state: absent
+
+#- name: clear the pem file
+#  file:
+#    path: /etc/pki/product/71.pem
+#    state: absent 
+
+- name: clean yum
+  command: yum clean all
+  ignore_errors: True
+
+- name: Remove workstation repo
+  ansible.builtin.yum_repository:
+    name: rhel-7-workstation-rpms
+    file: redhat
+    state: absent
+
+- name: run distro-sync
+  command: yum -y distro-sync
+  when: server_info.stdout == "Red Hat Enterprise Linux Workstation release 7.6 (Maipo)"
+
+- name: Update all packages
+  yum:
+    name: '*'
+    state: latest
+
+- name: Reboot the server
+  reboot:
+
+- name: Check for updated Kernel
+  shell: uname -r
+  register: kernel_version
+
+- name: Kernel is not updated
+  fail:
+    msg: Kernel is {{ kernel_version_stdout }}
+  when: kernel_version.stdout != '3.10.0-1160.90.1.el7.x86_64'

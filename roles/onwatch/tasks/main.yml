@@ -1,0 +1,56 @@
+---
+#    - name: Gravity force leave
+    #  command: gravity leave --force
+
+    #- name: Run Oosto v1 clean up script
+    #  command: /home/1.24.2.8/clean.sh -d
+
+    #- name: reboot the server
+    #  reboot:
+    #    reboot_timeout: 900
+
+- name: unlink ssd
+  file:
+   path: /ssd
+   state: absent
+
+- name: umount the home directory
+  ansible.posix.mount:
+    path: /home
+    state: absent
+
+- name: Remove Logicial volume for home
+  community.general.lvol:
+    vg: rhel
+    lv: home
+    state: absent
+    force: true
+
+- name: Extend the logical volume to consume all remaining space in the volume group
+  community.general.lvol:
+    vg: rhel
+    lv: root
+    size: +100%FREE
+
+- name: Grow the xfs partion
+  command: xfs_growfs /
+
+#    - name: untar onwatch file
+#unarchive:
+#src: /opt/onwatch
+#dest: /opt
+#remote_src: yes
+
+    #- name: lowercase the hostname
+    #set_fact:
+    #new_hostname: '{{ ansible_hostname|lower }}'
+
+- name: change hostname to lowercase
+  hostname:
+    name:  '{{ ansible_hostname |lower }}'
+
+- name: copy inventory file with hostname
+  template:
+   src: inventory.j2
+   dest: /opt/onwatch/inventory.ini
+   force: True

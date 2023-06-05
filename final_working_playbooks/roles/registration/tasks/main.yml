@@ -1,0 +1,35 @@
+---
+- name: Get client info
+  command: cat /etc/redhat-release
+  register: server_info
+
+- name: facts info
+  debug:
+    var: server_info
+
+- name: Only run when workstation
+  debug:
+    msg: "this is a workstation"
+  when: server_info.stdout == "Red Hat Enterprise Linux Server release 7.6 (Maipo)"
+  
+- name: copy rpm to client
+  copy:
+     src: katello-ca-consumer-latest.noarch.rpm
+     dest: /tmp/katello-ca-consumer-latest.noarch.rpm
+
+- name: Unregister from Subscription Manager, if registered
+  redhat_subscription:
+    state: absent
+
+- name: Install Satellite to server
+  yum:
+    name: /tmp/katello-ca-consumer-latest.noarch.rpm
+    state: present
+
+- name: Register to Satellite
+  community.general.redhat_subscription:
+    state: present
+    activationkey: RHEL_CONV_AK
+    org_id: Menards
+    force_register: yes
+    server_insecure: yes  

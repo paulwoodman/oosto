@@ -1,0 +1,33 @@
+---
+- name: File Transfer of Oosto
+  hosts: all
+  gather_facts: false
+  tasks:
+
+    - name: Get Sha of file
+      stat:
+        path: /tmp/rhel-8.7-x86_64-boot.iso
+        checksum_algorithm: md5
+        get_checksum: yes
+      register: local_file
+      delegate_to: localhost
+
+    - name: Copy file over and rate limit
+      ansible.posix.synchronize:
+        src: /tmp/rhel-8.7-x86_64-boot.iso
+        dest: /tmp
+        rsync_opts:
+          - "--bwlimit=10000"
+      delegate_to: localhost
+
+    - name: get sha of remote file
+      stat:
+        path: /tmp/rhel-8.7-x86_64-boot.iso
+        checksum_algorithm: md5
+        get_checksum: yes
+      register: remote_file
+
+    - name: Verify host files md5 value
+      debug:
+        msg: "File Compare hash value of {{ remote_file.stat.checksum }} is same as {{ local_file.stat.checksum }}."
+      failed_when: remote_file.stat.checksum != local_file.stat.checksum

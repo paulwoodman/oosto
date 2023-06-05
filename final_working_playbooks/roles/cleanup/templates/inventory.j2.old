@@ -1,0 +1,150 @@
+e host / pem key for ssh connection #####
+#ansible_user=ubuntu
+#ansible_ssh_private_key_file=inventory/devops.pem
+##### To use username@password for ssh connection #####
+ansible_ssh_user=root
+ansible_ssh_pass=P@ssw0rd
+ansible_sudo_pass=P@ssw0rd
+
+##### Product config #####
+product_version="onwatch-2.6.5"
+auto_install=true
+# Use "target_os_dist" to select the hosts OS distro for offline / online. Options: ubuntu1804 | ubuntu2004 | rhel7 | rhel8
+target_os_dist="rhel8"
+# To connect this site to HQ product please un comment the line below and edit the first item with the HQ IP (Or 3 IPs in HQ-HA)
+#hq_mongo_ip=["192.168.13.69","192.168.13.76","192.168.13.77"]
+#To run PipeNG in CPU mode (openvino) uncomment line bellow - NOTE this will affect all nodes and requires spesific config!
+#openvino=true
+
+[main_master]
+##### To use advertise_ip just add "advertise_ip" like the example below:
+#{{ansible_hostname}} ansible_host=ansible_default_ipv4.address
+{{ ansible_hostname }} ansible_host={{ansible_default_ipv4.address|default(ansible_all_ipv4_addresses[0])}}
+
+[k3s_master]
+#master2 ansible_host=[ENTER_IP]
+
+[data_node]
+#data1 ansible_host=[ENTER_IP]
+
+[gpu_node]
+#gpu1 ansible_host=[ENTER_IP]
+
+[edge]
+#edge1 ansible_host=[ENTER_IP] ansible_ssh_user=oosto
+[edge:vars]
+#ansible_ssh_private_key_file=inventory/[PRIVATE_KEY_PATH]
+#ansible_ssh_extra_args="-i inventory/[PUBLIC_SIGNED_KEY_PATH]"
+
+[download_machine]
+#download1 ansible_host=localhost ansible_connection=local
+
+################# DON'T CHANGE BELOW ########################
+#############################################################
+[master:children]
+main_master
+k3s_master
+
+[k3s_cluster:children]
+main_master
+k3s_master
+data_node
+gpu_node
+edge
+
+### Vars per host group
+########################
+[main_master:vars]
+group_labels="main-master=true node-role.kubernetes.io/master=true frontend=true backend=true monitor=true postgres=true sw-volume=true"
+upgrade_labels="main-master=true node-role.kubernetes.io/master=true"
+
+[k3s_master:vars]
+group_labels="node-role.kubernetes.io/master=true frontend=true backend=true monitor=true sw-volume=true"
+upgrade_labels="node-role.kubernetes.io/master=true"
+
+[data_node:vars]
+group_labels="node-role.kubernetes.io/data_node=true frontend=true backend=true monitor=true sw-volume=true"
+upgrade_labels="node-role.kubernetes.io/data_node=true"
+
+[gpu_node:vars]
+group_labels="node-role.kubernetes.io/gpu_node=true"
+upgrade_labels="node-role.kubernetes.io/gpu_node=true"
+
+[edge:vars]
+group_labels="node-role.kubernetes.io/edge=true"
+upgrade_labels="node-role.kubernetes.io/edge=true"[all:vars]
+##### To use host / pem key for ssh connection #####
+#ansible_user=ubuntu
+#ansible_ssh_private_key_file=inventory/devops.pem
+##### To use username@password for ssh connection #####
+ansible_ssh_user=root
+ansible_ssh_pass=P@ssw0rd
+ansible_sudo_pass=P@ssw0rd
+
+##### Product config #####
+product_version="onwatch-2.6.5"
+auto_install=true
+# Use "target_os_dist" to select the hosts OS distro for offline / online. Options: ubuntu1804 | ubuntu2004 | rhel7 | rhel8
+target_os_dist="rhel8"
+# To connect this site to HQ product please un comment the line below and edit the first item with the HQ IP (Or 3 IPs in HQ-HA)
+#hq_mongo_ip=["192.168.13.69","192.168.13.76","192.168.13.77"]
+#To run PipeNG in CPU mode (openvino) uncomment line bellow - NOTE this will affect all nodes and requires spesific config!
+#openvino=true
+
+[main_master]
+##### To use advertise_ip just add "advertise_ip" like the example below:
+#{{ansible_hostname}} ansible_host=ansible_default_ipv4.address
+{{ ansible_hostname }} ansible_host={{ansible_default_ipv4.address|default(ansible_all_ipv4_addresses[0])}}
+
+[k3s_master]
+#master2 ansible_host=[ENTER_IP]
+
+[data_node]
+#data1 ansible_host=[ENTER_IP]
+
+[gpu_node]
+#gpu1 ansible_host=[ENTER_IP]
+
+[edge]
+#edge1 ansible_host=[ENTER_IP] ansible_ssh_user=oosto
+[edge:vars]
+#ansible_ssh_private_key_file=inventory/[PRIVATE_KEY_PATH]
+#ansible_ssh_extra_args="-i inventory/[PUBLIC_SIGNED_KEY_PATH]"
+
+[download_machine]
+#download1 ansible_host=localhost ansible_connection=local
+
+################# DON'T CHANGE BELOW ########################
+#############################################################
+[master:children]
+main_master
+k3s_master
+
+[k3s_cluster:children]
+main_master
+k3s_master
+data_node
+gpu_node
+edge
+
+### Vars per host group
+########################
+[main_master:vars]
+group_labels="main-master=true node-role.kubernetes.io/master=true frontend=true backend=true monitor=true postgres=true sw-volume=true"
+upgrade_labels="main-master=true node-role.kubernetes.io/master=true"
+
+[k3s_master:vars]
+group_labels="node-role.kubernetes.io/master=true frontend=true backend=true monitor=true sw-volume=true"
+upgrade_labels="node-role.kubernetes.io/master=true"
+
+[data_node:vars]
+group_labels="node-role.kubernetes.io/data_node=true frontend=true backend=true monitor=true sw-volume=true"
+upgrade_labels="node-role.kubernetes.io/data_node=true"
+
+[gpu_node:vars]
+group_labels="node-role.kubernetes.io/gpu_node=true"
+upgrade_labels="node-role.kubernetes.io/gpu_node=true"
+
+[edge:vars]
+group_labels="node-role.kubernetes.io/edge=true"
+upgrade_labels="node-role.kubernetes.io/edge=true"

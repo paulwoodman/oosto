@@ -1,0 +1,40 @@
+---
+ 
+- name: Copy migration tar to server
+  copy:
+    src: migration-v1-to-v2-1.0.5.tar.gz
+    dest: /tmp
+    mode: 755
+ 
+- name: extract migration tar file
+  unarchive:
+    src: /tmp/migration-v1-to-v2-1.0.5.tar.gz
+    dest: /opt
+    remote_src: yes
+ 
+- name: Run migration
+  command: /opt/migration-v1-to-v2-1.0.5/migration-tool.sh --action export
+ 
+- name: get status
+  shell: kubectl logs -f $(kubectl get pods | grep migration | awk '{print $1}')
+  register: k8_log
+  ignore_errors: True
+ 
+- name: Tar folder for migration
+  archive:
+    path: /storage/data_exports
+    dest: /storage/v1_export.tar.gz
+  when: '"successful" in k8_log.stdout'
+
+- name: Verify v1 backup file exists
+  stat:
+    path: /storage/v1_export.tar.gz
+  register: oosto_backup
+
+- name: Stop Oosto v1 software
+  systemd:
+    name: "{{ item }}"
+    state: stopped
+  with_items:
+    - "gravity__gravitational.io__gcr.io-anyvision-training-planet__6.3.3-11700-cc9b05b"
+    - "gravity__gravitational.io__teleport__3.2.13"

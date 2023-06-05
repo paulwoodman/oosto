@@ -1,0 +1,4 @@
+---
+activation_key: RHEL_CONV_AK
+org_id: Menards
+satellite_katello_rpm_url: https://10.0.15.10/pub/katello-ca-consumer-latest.noarch.rpm

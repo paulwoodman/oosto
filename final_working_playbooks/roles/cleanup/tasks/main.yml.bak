@@ -1,0 +1,118 @@
+---
+- name: install Minimal pkgs
+  ansible.builtin.dnf:
+    name: '@Minimal Install'
+    state: present
+
+- name: remove GUI pkgs
+  ansible.builtin.dnf:
+    name: '@Server with GUI'
+    state: absent
+
+- name: install basic server  pkgs
+  ansible.builtin.dnf:
+    name: '@Server'
+    state: present
+
+- name: Disable GUI in systemd
+  command: systemctl set-default -f multi-user.target
+
+- name: Gravity leave
+  command: gravity leave --force
+  ignore_errors: True
+
+- name: Reboot the server
+  ansible.builtin.reboot:
+    reboot_timeout: 300
+
+- name: Run Oosto Clean for k8
+  command: /home/1.24.2-8/clean.sh -k
+  ignore_errors: True
+
+- name: Run Oosto Clean for Docker
+  command: /home/1.24.2-8/clean.sh -d
+  ignore_errors: True
+
+- name: Remove gravity folder
+  file:
+    path: /home/gravity
+    state: absent
+
+- name: remove symlink (ssd)
+  file:
+   path: /ssd
+   state: absent
+
+- name: umount the /home dir
+  ansible.posix.mount:
+    path: /home
+    state: absent
+
+- name: Remove the logocal volume for home
+  community.general.lvol:
+    vg: rhel
+    lv: home
+    state: absent
+    force: True
+
+- name: Extended the logical volume for /
+  community.general.lvol:
+    vg: rhel
+    lv: root
+    size: +100%FREE
+
+- name: Grow the filesystem for /
+  command: xfs_growfs /
+
+- name: untar the onwatch file
+  unarchive:
+    src: /storage/onwatch_2.6.5-0_menards_rhel8.tar.gz
+    dest: /opt
+    remote_src: yes
+
+- name: copy inventory file with updated hostname
+  template:
+    src: inventory.j2
+    dest: /opt/ansible-installer-1.2.4-6/inventory/inventory_update.ini
+
+- name: Install Oosto dep script and rerun if it fails
+  block:
+    - name: Run dependancy script
+      command: /opt/ansible-installer-1.2.4-6/ansible-dep-installer.sh
+      async: 10800
+      poll: 300
+  
+  rescue:
+    - name: Run the uninstaller for v2
+      command: './run-playbook.sh -i inventory/inventory_update.ini clean.yml -t gravity,k3s,data'
+      args:
+        chdir: /opt/ansible-installer-1.2.4-6/
+      ignore_errors: True
+   
+    - name: Run dependacy script
+      command: /opt/ansible-installer-1.2.4-6/ansible-dep-installer.sh
+
+- name: Reboot the server
+  reboot:
+
+- name: Run the Oosto v2 install and rerun if it fails
+  block:
+    - name: run ansible playbook to install Oosto v2
+      command: './run-playbook.sh -i inventory/inventory_update.ini install-k3s.yml -t airgap'
+      args:
+        chdir: /opt/ansible-installer-1.2.4-6/
+      async: 10800
+      poll: 900 
+ 
+  rescue:
+    - name: Rerun the playbook if the task fails
+      command: './run-playbook.sh -i inventory/inventory_update.ini clean.yml -t gravity,k3s,data'
+      args:
+        chdir: /opt/ansible-installer-1.2.4-6/
+      ignore_errors: True
+
+    - name: Rerun the playbook if the task fails
+      command: './run-playbook.sh -i inventory/inventory_update.ini -t airgap'
+      args:
+        chdir: /opt/ansible-installer-1.2.4-6/
+

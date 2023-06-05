@@ -1,0 +1,11 @@
+---
+- name: Oosto v1 to v2 install
+  hosts: all
+  gather_facts: False
+  tasks:
+
+    - name: Remove symlink
+      file:
+        path: /ssd
+        state: absent
+ 

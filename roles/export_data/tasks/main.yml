@@ -10,16 +10,23 @@
   unarchive:
     src: /tmp/migration-v1-to-v2-1.0.5.tar.gz
     dest: /opt
+    remote_src: yes
  
-- name: Run migration
-  command: /opt/migration-v1-to-v2-1.0.5/migration-tool.sh --action export
+      #- name: Run migration
+  #command: /opt/migration-v1-to-v2-1.0.5/migration-tool.sh --action export
  
-- name: get status
-  shell: kubectl logs -f $(kubectl get pods | grep migration | awk '{print $1}')
-  register: k8_log
+    #- name: get status
+  #shell: kubectl logs -f $(kubectl get pods | grep migration | awk '{print $1}')
+  #register: k8_log
  
 - name: Tar folder for migration
   archive:
-    path: /storage/data_exports
-    dest: /storage/v1_export.tar.gz
-  when: '"successful" in k8_log.stdout'
+    path: /tmp
+    dest: /storage/v1_exports.tar.gz
+    format: gz
+      #  when: '"successful" in k8_log.stdout'
+      
+- name: Verify backup file exists
+  stat:
+    path: /storage/v1_exports.tar.gz 
+  register: oosto_backup
