@@ -33,19 +33,44 @@
     src: leapp-data.tar.gz
     dest: /tmp
 
+<<<<<<< HEAD
 #- name: extract leapp data
 #  shell: tar -xzf /tmp/leapp-data.tar.gz -C /etc/leapp/files && rm /tmp/leapp-data.tar.gz
 
 - name: Run pre leapp
   command: leapp preupgrade --target 8.6
+=======
+- name: extract leapp data
+  shell: tar -xzf /tmp/leapp-data.tar.gz -C /etc/leapp/files && rm /tmp/leapp-data.tar.gz
+
+- name: Run pre leapp
+  command: leapp preupgrade --target 8.4
+>>>>>>> c76729024ff2bdf0a14ed790de01b662c5c3a11e
   ignore_errors: True
 
 - name: add leapp answers
   command: leapp answer --section remove_pam_pkcs11_module_check.confirm=True
 
 - name: Run pre leapp
+<<<<<<< HEAD
   command: leapp upgrade --target 8.6
 
 - name: reboot the server
   reboot:
   ignore_errors: True
+=======
+  command: leapp upgrade --target 8.4
+
+- name: reboot the server
+  reboot:
+    reboot_timeout: 7200
+
+- name: check for kernel update
+  command: uname -r
+  register: kernel_version_two
+
+- name: Kernel updated!
+  fail:
+    msg: Kernel is not updated {{ kernel_version.stdout }}
+  when: (kernel_version_two.stdout != '4.18.0-305.25.1.el8_4.x86_64')
+>>>>>>> c76729024ff2bdf0a14ed790de01b662c5c3a11e

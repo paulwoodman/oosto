@@ -9,7 +9,11 @@
     name: '@Server with GUI'
     state: absent
 
+<<<<<<< HEAD
 - name: install basic server pkgs
+=======
+- name: install basic server  pkgs
+>>>>>>> c76729024ff2bdf0a14ed790de01b662c5c3a11e
   ansible.builtin.dnf:
     name: '@Server'
     state: present
@@ -24,6 +28,7 @@
     exclude: '*.el8*'
   register: kernel_files
 
+<<<<<<< HEAD
 - name: Remove weak modules for the old kernels
   command: /usr/sbin/weak-modules --remove-kernel {{ item.path | basename }}
   loop: "{{ kernel_files.files }}"
@@ -64,3 +69,12 @@
 - name: Reinstall the current kernel to rescue kernel
   command: dnf reinstall -y kernel-core-{{ ansible_kernel }}
 
+=======
+- name: print old kernels
+  debug:
+    var: kernel_files
+
+#    var: "{{ kernel_files | regex_search('path\\s+=\\s+(.*)','\\1')}}"
+#- name: delete old kernels
+#  command: /usr/sbin/weak-modules --remove-kernel kernel_files.path
+>>>>>>> c76729024ff2bdf0a14ed790de01b662c5c3a11e
