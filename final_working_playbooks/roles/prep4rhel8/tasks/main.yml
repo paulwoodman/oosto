@@ -48,7 +48,9 @@
   command: leapp upgrade --target 8.4
 
 - name: reboot the server
-  reboot:
+  command: reboot
+
+# Tasks below not included as the upgrade to RHEL 8 takes a while and the task fails to report in a orderly time
 
 #- name: check for kernel update
 #  command: uname -r
