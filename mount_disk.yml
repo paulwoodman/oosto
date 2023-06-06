@@ -27,7 +27,7 @@
       group: root
       mode: '0644'
 
-  - name: add mount point to fstab
+  - name: add mount point to fstab and mount it
     ansible.posix.mount: 
       path: "{{ mount_point }}"
       src: "{{ disk }}"
