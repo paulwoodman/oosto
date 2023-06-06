@@ -1,5 +1,5 @@
 ---
-- name: Mount sdb to /storage
+- name: Mount disk to /storage
   hosts: all
   become: true
   vars:
