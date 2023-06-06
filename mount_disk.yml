@@ -1,0 +1,36 @@
+---
+- name: Mount sdb to /storage
+  hosts: all
+  become: true
+  vars:
+  - disk: sdb
+  - mount_point: /storage
+
+  roles:
+    - name: rhel-system-roles.storage
+      storage_volumes:
+        - name: storage
+          type: disk
+          disks:
+            - /dev/sdb
+          fs_type: xfs
+          mount_point: /storage
+  tags: newpartition
+
+  tasks:
+
+  - name: create mount point
+    ansible.builtin.file:
+      path: /storage
+      state: directory
+      owner: root
+      group: root
+      mode: '0644'
+
+  - name: add mount point to fstab
+    ansible.posix.mount: 
+      path: "{{ mount_point }}"
+      src: "{{ disk }}"
+      state: mounted
+      fstype: xfs
+      boot: true
