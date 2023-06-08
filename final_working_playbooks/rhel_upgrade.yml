@@ -4,14 +4,14 @@
   gather_facts: True
   tasks:
 
-    - name: Create a backup of oosto v1 data
-      include_role:
-        name: export_data
+    #    - name: Create a backup of oosto v1 data
+    #  include_role:
+    #    name: export_data
 
     - name: Convert workstation to server and update to latest RHEL 7
       include_role:
         name: wk2server
-      when: oosto_backup.stat.exists 
+          #      when: oosto_backup.stat.exists 
 
     - name: Upgrade server from RHEL 7 to RHEL 8
       include_role:

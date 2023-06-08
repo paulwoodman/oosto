@@ -112,3 +112,9 @@
     src: inventory.j2
     dest: /opt/ansible-installer-1.2.4-6/inventory/inventory_update.ini
 
+- name: Edit the onwatch file to enable HQ
+  replace:
+     path: /opt/ansible-installer-1.2.4-6/inventory/product-versions/onwatch-2.6.5.yml
+     regexp: '(hq_plugin:|\s+enable:)(.no)'
+     replace: 'enable: yes'
+     backup: yes

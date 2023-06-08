@@ -2,3 +2,15 @@
 activation_key: RHEL_CONV_AK
 org_id: Menards
 satellite_katello_rpm_url: https://10.0.15.10/pub/katello-ca-consumer-latest.noarch.rpm
+
+dns_entries:
+  - "127.0.0.1   rancher.anv"
+  - "127.0.0.1   argo.anv"
+  - "127.0.0.1   hq.tls.ai"
+  - "127.0.0.1   hq-api.tls.ai"
+  - "127.0.0.1   prom.anv"
+  - "127.0.0.1   pushgateway.anv"
+  - "127.0.0.1   grafana.anv"
+  - "127.0.0.1   kafka-hq.anv"
+  - "127.0.0.1   register"
+  - "192.168.185.0   ec-store-sat1.menards.net"

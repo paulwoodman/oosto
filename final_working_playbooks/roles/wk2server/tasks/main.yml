@@ -8,6 +8,27 @@
   command: cat /etc/redhat-release
   register: server_info
 
+- name: Add dns entries to the host file
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ item }}"
+    insertafter: EOF
+  loop: "{{ dns_entries }}"
+
+- name: edit onwatch
+  lineinfile:
+     path: /opt/ansible-installer-1.2.4-6/inventory/product-versions/onwatch-2.6.5.yml
+     regexp: '(hq_plugin:|\s+enable:)(.no)'
+     line: '    enable: yes'
+     backup: yes
+    
+- name: Fix for registering to Satellite, as machine potentially have the same UUID
+  template:
+    src: uuid.j2
+    dest: /etc/rhsm/facts/uuid.facts
+    owner: root
+    mode: '0644'
+
 - name: Only run when workstation
   debug:
     msg: "this is a workstation"
@@ -45,16 +66,10 @@
   when: server_info.stdout == "Red Hat Enterprise Linux Workstation release 7.6 (Maipo)"
   ignore_errors: True
    
-
 - name: remove workstation packages
   yum:
     name: redhat-release-workstation*  
     state: absent
-
-#- name: clear the pem file
-#  file:
-#    path: /etc/pki/product/71.pem
-#    state: absent 
 
 - name: clean yum
   command: yum clean all
