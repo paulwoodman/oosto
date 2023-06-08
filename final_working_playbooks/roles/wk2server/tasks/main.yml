@@ -15,13 +15,6 @@
     insertafter: EOF
   loop: "{{ dns_entries }}"
 
-- name: edit onwatch
-  lineinfile:
-     path: /opt/ansible-installer-1.2.4-6/inventory/product-versions/onwatch-2.6.5.yml
-     regexp: '(hq_plugin:|\s+enable:)(.no)'
-     line: '    enable: yes'
-     backup: yes
-    
 - name: Fix for registering to Satellite, as machine potentially have the same UUID
   template:
     src: uuid.j2
